@@ -7,13 +7,27 @@ public partial class SimController : MonoBehaviour
     // Start is called before the first frame update
     private void Initialize()
     {
-        //time to traverse box bounds
-        tau = Mathf.Min(boundsMax.x - boundsMin.x, boundsMax.y - boundsMin.y) / Mathf.Min(defaultVelocity.x, defaultVelocity.z);
-        timeMax = tau * 20;
-        timeStep = tau / 500;
-        stepMax = Mathf.RoundToInt(timeMax / timeStep);
+        isSimRunning = false;
+        logCreated = false;
 
+        boundsMax.x = curLength / 2;
+        boundsMax.z = curLength / 2;
+        boundsMin.x = -curLength / 2;
+        boundsMin.z = -curLength / 2;
+
+        //reset values
         RandomGaussian.SetSigma(0.2f * (boundsMax.x - boundsMin.x));
+        simTime = 0;
+        particleMass.text = "Particle mass: " + Particle.DefaultMass();
+        temp.text = "Temperature: " + Temp();
+
+        //clear old particles
+        while (particles.Count > 0)
+        {
+            Particle curParticle = particles[0];
+            particles.RemoveAt(0);
+            Object.Destroy(curParticle);
+        }
 
         //create starting particles
         int particlesLeft = startingParticles;
@@ -21,6 +35,7 @@ public partial class SimController : MonoBehaviour
         {
             particlesLeft--;
             CreateParticle();
+            particleVelocity.text = "Particle velocity: " + particles[0].velocity;
         }
 
         //create starting box bounds
@@ -31,21 +46,21 @@ public partial class SimController : MonoBehaviour
         //negative x direction
         newWallGameobject = GameObject.Instantiate(wallPrefab);
         newWallGameobject.transform.position = new Vector3(boundsMin.x, 0, 0);
-        newWallGameobject.transform.localScale = new Vector3(wallWidth, wallHeight, boundsMax.y - boundsMin.y);
+        newWallGameobject.transform.localScale = new Vector3(wallWidth, wallHeight, boundsMax.z - boundsMin.z);
 
         //positive x direction
         newWallGameobject = GameObject.Instantiate(wallPrefab);
         newWallGameobject.transform.position = new Vector3(boundsMax.x, 0, 0);
-        newWallGameobject.transform.localScale = new Vector3(wallWidth, wallHeight, boundsMax.y - boundsMin.y);
+        newWallGameobject.transform.localScale = new Vector3(wallWidth, wallHeight, boundsMax.z - boundsMin.z);
 
         //negative z direction
         newWallGameobject = GameObject.Instantiate(wallPrefab);
-        newWallGameobject.transform.position = new Vector3(0, 0, boundsMin.x);
-        newWallGameobject.transform.localScale = new Vector3(boundsMax.y - boundsMin.y, wallHeight, wallWidth);
+        newWallGameobject.transform.position = new Vector3(0, 0, boundsMin.z);
+        newWallGameobject.transform.localScale = new Vector3(boundsMax.x - boundsMin.x, wallHeight, wallWidth);
 
         //positive z direction
         newWallGameobject = GameObject.Instantiate(wallPrefab);
-        newWallGameobject.transform.position = new Vector3(0, 0, boundsMax.x);
-        newWallGameobject.transform.localScale = new Vector3(boundsMax.y - boundsMin.y, wallHeight, wallWidth);
+        newWallGameobject.transform.position = new Vector3(0, 0, boundsMax.z);
+        newWallGameobject.transform.localScale = new Vector3(boundsMax.x - boundsMin.x, wallHeight, wallWidth);
     }
 }
