@@ -73,7 +73,7 @@ public partial class SimController : MonoBehaviour
     void Update()
     {
         simTime += Time.deltaTime;
-        timeText.text = "" + simTime;
+        timeText.text = "Time: " + simTime;
 
         //calculate average force on each wall
         avgForceLeft = totalImpulseLeft / simTime;
