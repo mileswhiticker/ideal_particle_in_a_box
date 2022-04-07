@@ -5,13 +5,19 @@ using UnityEngine.UI;
 
 public partial class SimController : MonoBehaviour
 {
-    private int startingParticles = 1;
+    private int startingParticles = 100;
     private float timeMax = 60;
     private float startingTemp = 300f;  //kelvin
     public Text particleVelocity;
     public Text particleMass;
     public Text temp;
-    private float timeRate = 100;
+    private int trialIndex = 0;
+    private int trialMax = 4;
+    private int widthIndex = 0;
+    private List<float> trialWidths = new List<float>();
+    private List<GameObject> walls = new List<GameObject>();
+
+    private float timeRate = 1;
     public float Temp()
     {
         return startingTemp;
@@ -55,10 +61,31 @@ public partial class SimController : MonoBehaviour
     public System.DateTime ApplicationStartTime;
     void Start()
     {
-        Initialize();
-        Log.logID = "" + Random.Range(1111111,9999999);
         ApplicationStartTime = System.DateTime.UtcNow;
+        Log.logID = "" + ApplicationStartTime.Day + "_" + ApplicationStartTime.Month + "_" + ApplicationStartTime.Year + "_" + ApplicationStartTime.Ticks;
         Log.AddLine("Sim started " + ApplicationStartTime);
+
+        //what widths are we testing?
+        trialWidths.Add(1);
+        trialWidths.Add(0.5f);
+        trialWidths.Add(1.5f);
+        trialWidths.Add(2);
+        trialWidths.Add(2.5f);
+        trialWidths.Add(3f);
+        
+        //output our initial data
+        for(int i = 0; i < trialWidths.Count; i++)
+        {
+            for (int j = 0; j < trialMax; j++)
+            {
+                Log.AddLine("" + trialWidths[i]);
+            }
+        }
+        
+        //start with this one
+        curLength = trialWidths[0];
+
+        Initialize();
         isSimRunning = true;
     }
 
@@ -121,8 +148,33 @@ public partial class SimController : MonoBehaviour
             isSimRunning = false;
             if(!logCreated)
             {
-                Log.AddLine("Length:" + curLength + ", pressure:" + averagePressure);
+                //Log.AddLine("Length:" + curLength + ", pressure:" + averagePressure);
+                Log.AddLine("" + averagePressure);
                 logCreated = true;
+                trialIndex++;
+
+                //are we at max trials for this width?
+                if(trialIndex >= trialMax)
+                {
+                    //go to next width
+                    widthIndex++;
+
+                    //do we have new widths to trial?
+                    if (widthIndex < trialWidths.Count)
+                    {
+                        //set the new wall length and reset the trial counter
+                        trialIndex = 0;
+                        curLength = trialWidths[widthIndex];
+                    }
+                }
+
+                //should we trial the current width?
+                if(trialIndex < trialMax)
+                {
+                    //next trial for this width
+                    Initialize();
+                    isSimRunning = true;
+                }
             }
         }
     }

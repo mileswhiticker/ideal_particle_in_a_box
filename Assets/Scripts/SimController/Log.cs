@@ -17,12 +17,19 @@ public static class Log
             UnityEngine.Debug.Log("Creating " + LogDirPath);
             Directory.CreateDirectory(LogDirPath);
         }
-        WriteText(filePath, aTextLine + "\r\n");
+        WriteText(filePath, aTextLine);
     }
     public static void WriteText(string aFilePath, string aText)
     {
         StreamWriter writer = System.IO.File.AppendText(aFilePath);
         writer.WriteLine(aText);
+        writer.Close();
+    }
+    public static void WriteTrialData(string aTrialData)
+    {
+        string filePath = LogDirPath + "/Sim " + logID + ".txt";
+        StreamWriter writer = System.IO.File.AppendText(filePath);
+        writer.WriteLine(aTrialData);
         writer.Close();
     }
 }

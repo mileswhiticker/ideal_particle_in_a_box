@@ -26,7 +26,7 @@ public partial class SimController : MonoBehaviour
         {
             Particle curParticle = particles[0];
             particles.RemoveAt(0);
-            Object.Destroy(curParticle);
+            Object.Destroy(curParticle.gameObject);
         }
 
         //create starting particles
@@ -38,6 +38,14 @@ public partial class SimController : MonoBehaviour
             particleVelocity.text = "Particle velocity: " + particles[0].velocity;
         }
 
+        //clear old walls
+        while(walls.Count > 0)
+        {
+            GameObject curWall = walls[0];
+            Object.Destroy(curWall);
+            walls.RemoveAt(0);
+        }
+
         //create starting box bounds
         GameObject newWallGameobject;
         float wallWidth = 0.01f;
@@ -47,20 +55,24 @@ public partial class SimController : MonoBehaviour
         newWallGameobject = GameObject.Instantiate(wallPrefab);
         newWallGameobject.transform.position = new Vector3(boundsMin.x, 0, 0);
         newWallGameobject.transform.localScale = new Vector3(wallWidth, wallHeight, boundsMax.z - boundsMin.z);
+        walls.Add(newWallGameobject);
 
         //positive x direction
         newWallGameobject = GameObject.Instantiate(wallPrefab);
         newWallGameobject.transform.position = new Vector3(boundsMax.x, 0, 0);
         newWallGameobject.transform.localScale = new Vector3(wallWidth, wallHeight, boundsMax.z - boundsMin.z);
+        walls.Add(newWallGameobject);
 
         //negative z direction
         newWallGameobject = GameObject.Instantiate(wallPrefab);
         newWallGameobject.transform.position = new Vector3(0, 0, boundsMin.z);
         newWallGameobject.transform.localScale = new Vector3(boundsMax.x - boundsMin.x, wallHeight, wallWidth);
+        walls.Add(newWallGameobject);
 
         //positive z direction
         newWallGameobject = GameObject.Instantiate(wallPrefab);
         newWallGameobject.transform.position = new Vector3(0, 0, boundsMax.z);
         newWallGameobject.transform.localScale = new Vector3(boundsMax.x - boundsMin.x, wallHeight, wallWidth);
+        walls.Add(newWallGameobject);
     }
 }
