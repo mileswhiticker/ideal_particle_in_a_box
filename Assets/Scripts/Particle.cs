@@ -8,7 +8,7 @@ public class Particle : MonoBehaviour
     public Vector3 velocity = new Vector3(0, 0, 0);
     public static float DefaultMass()
     {
-        return Mathf.Pow(10f, -26f);
+        return Mathf.Pow(10f, -24f);
     }
     private float mass = 1;
     public float Mass()
@@ -25,7 +25,8 @@ public class Particle : MonoBehaviour
     {
         isRunning = !isRunning;
     }
-    float tLeftStep = 0f;
+    float tLeftStep = 0.5f;
+    public bool doDebug = false;
     void Update()
     {
         if (isRunning && myController != null && myController.isSimRunning)
@@ -34,12 +35,68 @@ public class Particle : MonoBehaviour
             tLeftStep -= Time.deltaTime;
             if(tLeftStep <= 0)
             {
-                tLeftStep = Time.deltaTime;
-                //what is the change?
+                tLeftStep = 0;// 0.5f;
                 float deltaTime = myController.SimDeltaTime();
-                Vector3 posDelta = velocity * deltaTime;
+
+                //are we doing particle interactions?
+                if(myController.DoInteractions())
+                {
+                    //calculate net forces from all other particles
+                    Vector3 interactionEffect = new Vector3(0,0,0);
+                    foreach(Particle otherParticle in myController.particles)
+                    {
+                        if(otherParticle == this)
+                        {
+                            //dont interact with yourself, you'll go blind
+                            continue;
+                        }
+
+                        //calculate the difference in position
+                        //a positive value is a repulsive force therefore calculate the posdelta from other -> this
+                        Vector3 posDelta = otherParticle.transform.position - this.transform.position;
+                        if (doDebug) Debug.Log("posDelta:" + posDelta);
+                        if (posDelta.x == 0 && posDelta.y == 0 && posDelta.z == 0)
+                        {
+                            //no interaction effect if we are on top of each other
+                            continue;
+                        }
+
+                        //calculate the force due to interaction
+                        //use potential 1/r^4 - 1/r^2
+                        float distSquared = posDelta.x * posDelta.x + posDelta.z * posDelta.z;
+                        if (doDebug) Debug.Log("distSquared:" + distSquared);
+                        float force = 1 / (distSquared * distSquared) - 1 / (distSquared);
+                        if (doDebug) Debug.Log("force:" + force);
+
+                        //calculate the acceleration
+                        float accelMagnitude = deltaTime * force / Mass();
+                        if (doDebug) Debug.Log("accelMagnitude:" + accelMagnitude);
+
+                        //work out the acceleration vector
+
+                        //tan(theta) = opp/adj
+                        //:. theta = atan(opp/adj)
+                        float theta = Mathf.Atan(posDelta.x / posDelta.z);
+                        if (doDebug) Debug.Log("theta:" + theta);
+
+                        //cos(theta) = adj/hyp
+                        //:. adj = hyp*cos(theta)
+                        //:. opp = hyp*sin(theta)
+                        Vector3 accel = new Vector3(accelMagnitude * Mathf.Cos(theta), 0, accelMagnitude * Mathf.Sin(theta));
+                        if (doDebug) Debug.Log("accel:" + accel);
+                        interactionEffect += accel;
+                    }
+
+                    //some interactions will cancel each other out
+                    //if(doDebug) Debug.Log("interactionEffect:" + interactionEffect);
+                    velocity += interactionEffect;
+                }
+
                 bool outOfBounds = false;
-                transform.position += posDelta;
+                transform.position += velocity * deltaTime;
+
+                //a heat dissipation effect to gradually cool the simulation
+                //velocity *= 0.995f;
                 do
                 {
                     outOfBounds = false;
