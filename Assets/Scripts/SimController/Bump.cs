@@ -8,25 +8,25 @@ public partial class SimController : MonoBehaviour
     public void BumpLeft(Particle aParticle)
     {
         //Debug.Log("BumpLeft()");
-        totalImpulseLeft += 2 * aParticle.GetMomentum();
+        totalImpulseLeft -= 2 * aParticle.velocity.x * aParticle.Mass();
         leftText.text = "Impulse: " + totalImpulseLeft;
     }
     public void BumpRight(Particle aParticle)
     {
         //Debug.Log("BumpRight()");
-        totalImpulseRight += 2 * aParticle.GetMomentum();
+        totalImpulseRight += 2 * aParticle.velocity.x * aParticle.Mass();
         rightText.text = "Impulse: " + totalImpulseRight;
     }
     public void BumpTop(Particle aParticle)
     {
         //Debug.Log("BumpTop()");
-        totalImpulseTop += 2 * aParticle.GetMomentum();
+        totalImpulseTop += 2 * aParticle.velocity.z * aParticle.Mass();
         topText.text = "Impulse: " + totalImpulseTop;
     }
     public void BumpBottom(Particle aParticle)
     {
         //Debug.Log("BumpBottom()");
-        totalImpulseBottom += 2 * aParticle.GetMomentum();
+        totalImpulseBottom -= 2 * aParticle.velocity.z * aParticle.Mass();
         bottomText.text = "Impulse: " + totalImpulseBottom;
     }
     public float totalImpulseLeft = 0;
