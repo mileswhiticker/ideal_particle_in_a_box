@@ -5,19 +5,24 @@ using UnityEngine.UI;
 
 public partial class SimController : MonoBehaviour
 {
-    private int startingParticles = 100;
-    private float timeMax = 60;
+    private int startingParticles = 9;
+    private float timeMax = 10;
     private float startingTemp = 300f;  //kelvin
     public Text particleVelocity;
     public Text particleMass;
     public Text temp;
     private int trialIndex = 0;
-    private int trialMax = 4;
+    private int trialMax = 1;
     private int widthIndex = 0;
     private List<float> trialWidths = new List<float>();
     private List<GameObject> walls = new List<GameObject>();
+    private bool doInteractions = false;
+    public bool DoInteractions()
+    {
+        return doInteractions;
+    }
 
-    private float timeRate = 1;
+    private float timeRate = 1f;
     public float Temp()
     {
         return startingTemp;
@@ -27,6 +32,7 @@ public partial class SimController : MonoBehaviour
     public GameObject wallPrefab;
     private float curLength = 3;
     private Vector3 boundsMin = new Vector3(-1, -1, -1);
+    List<float> squaredMeanVelocityHorizontal = new List<float>();
     public Vector3 BoundsMin()
     {
         return boundsMin;
@@ -66,8 +72,8 @@ public partial class SimController : MonoBehaviour
         Log.AddLine("Sim started " + ApplicationStartTime);
 
         //what widths are we testing?
-        trialWidths.Add(1);
         trialWidths.Add(0.5f);
+        trialWidths.Add(1);
         trialWidths.Add(1.5f);
         trialWidths.Add(2);
         trialWidths.Add(2.5f);
@@ -86,13 +92,17 @@ public partial class SimController : MonoBehaviour
         curLength = trialWidths[0];
 
         Initialize();
+        endTimeText.text = "Sim end time: " + trialWidths.Count * trialMax * timeMax;
         isSimRunning = true;
     }
 
     public Text timeText;
     public Text pressureText;
+    public Text runningTimeText;
+    public Text endTimeText;
     //
     public float simTime = 0;
+    public float runningTime = 0;
     public float avgForceLeft = 0;
     public float avgForceRight = 0;
     public float avgForceTop = 0;
@@ -119,8 +129,10 @@ public partial class SimController : MonoBehaviour
     {
         if(simTime < timeMax || timeMax <= 0)
         {
-            simTime += SimDeltaTime();
-            timeText.text = "Time: " + simTime;
+            simTime += SimDeltaTime();  //1/60 sec by default
+            runningTime += SimDeltaTime();
+            timeText.text = "Trial time: " + simTime;
+            runningTimeText.text = "Running time: " + runningTime;
 
             //calculate average force on each wall
             avgForceLeft = totalImpulseLeft / simTime;
@@ -149,7 +161,7 @@ public partial class SimController : MonoBehaviour
             if(!logCreated)
             {
                 //Log.AddLine("Length:" + curLength + ", pressure:" + averagePressure);
-                Log.AddLine("" + averagePressure);
+                string dataLine = "" + averagePressure;
                 logCreated = true;
                 trialIndex++;
 
@@ -165,15 +177,29 @@ public partial class SimController : MonoBehaviour
                         //set the new wall length and reset the trial counter
                         trialIndex = 0;
                         curLength = trialWidths[widthIndex];
+                        dataLine += ";...";
+                    }
+                    else
+                    {
+                        dataLine += ",...";
                     }
                 }
+                Log.AddLine(dataLine);
 
                 //should we trial the current width?
-                if(trialIndex < trialMax)
+                if (trialIndex < trialMax)
                 {
                     //next trial for this width
                     Initialize();
                     isSimRunning = true;
+                }
+                else
+                {
+                    //we are finished
+                    foreach (float rms in squaredMeanVelocityHorizontal)
+                    {
+                        Log.AddLine("" + rms + ",...");
+                    }
                 }
             }
         }

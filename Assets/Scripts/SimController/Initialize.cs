@@ -30,16 +30,55 @@ public partial class SimController : MonoBehaviour
         }
 
         //create starting particles
+        float squaredVelocitiesHorizontal = 0;
         int particlesLeft = startingParticles;
-        while (particlesLeft > 0)
+
+        //layout particles on a grid to avoid exploding from interaction forces
+        float gridDims = Mathf.Sqrt(startingParticles);
+        gridDims = Mathf.Ceil(gridDims);
+        if (gridDims < 2)
         {
-            particlesLeft--;
-            CreateParticle();
-            particleVelocity.text = "Particle velocity: " + particles[0].velocity;
+            gridDims = 2;
+        }
+        float cellWidth = curLength / gridDims;
+        //Debug.Log("gridDims:" + gridDims + ", cellWidth:" + cellWidth);
+
+        for (int i = 0; i < gridDims; i++)
+        {
+            for (int j = 0; j < gridDims; j++)
+            {
+                //create the next one
+                Vector3 gridPos = new Vector3(i * cellWidth - curLength/2 + cellWidth/2, 0, j * cellWidth - curLength/2 + cellWidth/2);
+
+                particlesLeft--;
+                Particle curParticle = CreateParticle(gridPos);
+                curParticle.gameObject.name = "Particle #" + (startingParticles - particlesLeft);
+                squaredVelocitiesHorizontal += curParticle.velocity.x * curParticle.velocity.x;
+                //Debug.Log(curParticle.velocity.x * curParticle.velocity.x);
+
+                //none left
+                if (particlesLeft <= 0)
+                {
+                    break;
+                }
+            }
+            //none left
+            if (particlesLeft <= 0)
+            {
+                break;
+            }
         }
 
+        //debug text for one of the particles
+        particles[0].doDebug = true;
+
+        float rmsHorizontal = Mathf.Sqrt(squaredVelocitiesHorizontal) / (float)startingParticles;
+        //Debug.Log("RMS: "+ rmsHorizontal);
+        particleVelocity.text = "RMS horiz velocity: " + rmsHorizontal;
+        squaredMeanVelocityHorizontal.Add(rmsHorizontal);
+
         //clear old walls
-        while(walls.Count > 0)
+        while (walls.Count > 0)
         {
             GameObject curWall = walls[0];
             Object.Destroy(curWall);
