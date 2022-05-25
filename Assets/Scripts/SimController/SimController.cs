@@ -129,7 +129,9 @@ public partial class SimController : MonoBehaviour
     bool logCreated = false;
     void Update()
     {
-        if(simTime < timeMax || timeMax <= 0)
+        PollInput();
+
+        if (simTime < timeMax || timeMax <= 0)
         {
             simTime += SimDeltaTime();  //1/60 sec by default
             runningTime += SimDeltaTime();
