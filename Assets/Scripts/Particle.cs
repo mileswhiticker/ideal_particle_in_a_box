@@ -8,7 +8,7 @@ public class Particle : MonoBehaviour
     public Vector3 velocity = new Vector3(0, 0, 0);
     public static float DefaultMass()
     {
-        return Mathf.Pow(10f, -24f);
+        return 1;//return Mathf.Pow(10f, -24f);
     }
     private float mass = 1;
     public float Mass()

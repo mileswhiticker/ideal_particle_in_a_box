@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 public partial class SimController : MonoBehaviour
 {
-    private int startingParticles = 9;
-    private float timeMax = 10;
+    private int startingParticles = 2;
+    private float timeMax = 9999;
     private float startingTemp = 300f;  //kelvin
     public Text particleVelocity;
     public Text particleMass;
@@ -16,7 +16,7 @@ public partial class SimController : MonoBehaviour
     private int widthIndex = 0;
     private List<float> trialWidths = new List<float>();
     private List<GameObject> walls = new List<GameObject>();
-    private bool doInteractions = false;
+    private bool doInteractions = true;
     public bool DoInteractions()
     {
         return doInteractions;
@@ -72,11 +72,13 @@ public partial class SimController : MonoBehaviour
         Log.AddLine("Sim started " + ApplicationStartTime);
 
         //what widths are we testing?
+        /*
         trialWidths.Add(0.5f);
         trialWidths.Add(1);
         trialWidths.Add(1.5f);
         trialWidths.Add(2);
         trialWidths.Add(2.5f);
+        */
         trialWidths.Add(3f);
         
         //output our initial data
