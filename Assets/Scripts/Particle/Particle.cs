@@ -2,28 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Particle : MonoBehaviour
+public partial class Particle : MonoBehaviour
 {
     public SimController myController;
     public Vector3 velocity = new Vector3(0, 0, 0);
-    public static float DefaultMass()
-    {
-        return 1;//return Mathf.Pow(10f, -24f);
-    }
-    private float mass = 1;
-    public float Mass()
-    {
-        return mass;
-    }
     public float speed = 0;
     bool isRunning = false;
     public void Initialize()
     {
         mass = DefaultMass();
-    }
-    public void ToggleRunning()
-    {
-        isRunning = !isRunning;
     }
     float tLeftStep = 0.5f;
     public bool doDebug = false;
@@ -140,25 +127,5 @@ public class Particle : MonoBehaviour
                 while (outOfBounds);
             }
         }
-    }
-    public float GetMomentum()
-    {
-        return speed * mass;
-    }
-    bool OutOfBoundsLeft()
-    {
-        return transform.position.x < myController.BoundsMin().x;
-    }
-    bool OutOfBoundsRight()
-    {
-        return transform.position.x > myController.BoundsMax().x;
-    }
-    bool OutOfBoundsTop()
-    {
-        return transform.position.z > myController.BoundsMax().z;
-    }
-    bool OutOfBoundsBottom()
-    {
-        return transform.position.z < myController.BoundsMin().z;
     }
 }
