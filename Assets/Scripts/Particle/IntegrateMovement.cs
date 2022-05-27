@@ -90,5 +90,9 @@ public partial class Particle : MonoBehaviour
             }
         }
         while (outOfBounds);
+
+        //cool the simulation down slightly
+        //this is crude but fast
+        velocity *= 0.99f;
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public partial class SimController : MonoBehaviour
 {
-    private int startingParticles = 2;
+    private int startingParticles = 100;
     private float timeMax = 9999;
     private float startingTemp = 300f;  //kelvin
     public Text particleVelocity;

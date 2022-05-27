@@ -28,7 +28,7 @@ public partial class SimController : MonoBehaviour
 
         //random starting velocity (gaussian and based off equipartition formula for thermal equilibrium)
         //RandomGaussian.SetSigma(Mathf.Sqrt(1.38f * Mathf.Pow(10f, -23f) * Temp() / newParticle.Mass()));
-        RandomGaussian.SetSigma(Mathf.Sqrt(0.01f * Temp() / newParticle.Mass()));
+        //RandomGaussian.SetSigma(Mathf.Sqrt(0.01f * Temp() / newParticle.Mass()));
         newParticle.velocity = new Vector3(RandomGaussian.Generate(), 0, RandomGaussian.Generate());
         //newParticle.velocity = new Vector3(200, 0, 100);
         newParticle.speed = newParticle.velocity.magnitude;

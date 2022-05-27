@@ -43,6 +43,8 @@ public partial class SimController : MonoBehaviour
         float cellWidth = curLength / gridDims;
         //Debug.Log("gridDims:" + gridDims + ", cellWidth:" + cellWidth);
 
+        //RandomGaussian.SetSigma(0.01f);
+
         for (int i = 0; i < gridDims; i++)
         {
             for (int j = 0; j < gridDims; j++)
