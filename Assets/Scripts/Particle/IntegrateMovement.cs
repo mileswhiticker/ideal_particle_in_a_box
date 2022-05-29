@@ -44,7 +44,7 @@ public partial class Particle : MonoBehaviour
 
         //if (doDebug) Debug.Log("velocity:" + velocity);
 
-        //BoundaryIntersections();
+        BoundaryIntersections();
 
         //a heat dissipation effect to gradually cool the simulation
         //doing x and z separately is crude but fast to calculate

@@ -39,7 +39,7 @@ public partial class Particle : MonoBehaviour
                 //for optimisation: only calculate nearby particles
                 if(distSquared > 1)
                 {
-                    continue;
+                    //continue;
                 }
 
                 //if (doDebug) Debug.Log("distSquared:" + distSquared);
