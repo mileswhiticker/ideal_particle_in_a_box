@@ -23,8 +23,8 @@ public partial class SimController : MonoBehaviour
         //currentTemp = (averagePressure * volum)) / (particles.Count * gasConstant);
 
         //van der waals gas
-        float attractiveConstant = 0.001f;
-        float repulsiveConstant = -124f;//avoNumber * particles.Count * 16 * Mathf.PI * Particle.Radius() * Particle.Radius() * Particle.Radius() / 3;
+        //float attractiveConstant = 0.001f;
+        //float repulsiveConstant = -124f;//avoNumber * particles.Count * 16 * Mathf.PI * Particle.Radius() * Particle.Radius() * Particle.Radius() / 3;
         //currentTemp = ((averagePressure + (attractiveConstant * particles.Count * particles.Count) / (volume * volume)) * (volume - particles.Count * repulsiveConstant)) / (particles.Count * gasConstant);
 
         //equipartition formula

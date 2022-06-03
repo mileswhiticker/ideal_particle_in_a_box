@@ -17,9 +17,9 @@ public partial class SimController : MonoBehaviour
     public Text temp;
     public Text sidelength;
     public Text volume;
-    private int trialIndex = 0;
+    //private int trialIndex = 0;
     private int trialMax = 1;
-    private int widthIndex = 0;
+    //private int widthIndex = 0;
     private List<float> trialWidths = new List<float>();
     private List<GameObject> walls = new List<GameObject>();
     private bool doInteractions = true;
