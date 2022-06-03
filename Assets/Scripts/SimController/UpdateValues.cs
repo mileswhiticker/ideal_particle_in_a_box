@@ -44,5 +44,13 @@ public partial class SimController : MonoBehaviour
         averagePressure = (avgPressureLeft + avgPressureRight + avgPressureTop + avgPressureBottom + avgPressureAbove + avgPressureBelow) / 6;
         //
         pressureText.text = "Avg pressure: " + averagePressure;
+
+        //some logging
+        if (tLeftLogData < 0)
+        {
+            skyPressures.Add(avgPressureAbove);
+            groundPressures.Add(avgPressureBelow);
+            horizontalPressures.Add((avgPressureLeft + avgPressureRight + avgPressureTop + avgPressureBottom) / 4);
+        }
     }
 }

@@ -18,7 +18,6 @@ public partial class Particle : MonoBehaviour
             if (myController.tLeftLogData <= 0)
             {
                 logVelocities = true;
-                myController.tLeftLogData = myController.logDataInterval;
                 sqrvelocities = new List<float>();
                 myController.squaredVelocities.Add(sqrvelocities);
                 //Log.AddLine("" + myController.currentTemp + ",...");
