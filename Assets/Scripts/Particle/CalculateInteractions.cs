@@ -12,9 +12,29 @@ public partial class Particle : MonoBehaviour
         interactionAcceleration = new Vector3();
         if (myController.DoInteractions())
         {
+            bool logVelocities = false;
+            List<float> velocities = null;
+            if (myController.tLeftLogData <= 0)
+            {
+                logVelocities = true;
+                myController.tLeftLogData = myController.logDataInterval;
+                velocities = new List<float>();
+                myController.squaredVelocities.Add(velocities);
+                //Log.AddLine("" + myController.currentTemp + ",...");
+                Log.AddLine("" + myController.averagePressure + ",...");
+            }
+
             //calculate net forces from all other particles
             foreach (Particle otherParticle in myController.particles)
             {
+                if (myController.doAvgVelocityUpdate)
+                {
+                    myController.averageVelocitySqr += otherParticle.velocity.sqrMagnitude;
+                }
+                if(logVelocities)
+                {
+                    velocities.Add(otherParticle.velocity.sqrMagnitude);
+                }
                 if (otherParticle == this)
                 {
                     //dont interact with yourself, you'll go blind
@@ -44,9 +64,9 @@ public partial class Particle : MonoBehaviour
 
                 //if (doDebug) Debug.Log("distSquared:" + distSquared);
                 float force = 1 / (10 * distSquared * distSquared) - 1 / (10 * distSquared);
-                if(force > 0.25f)
+                if(force > 1)
                 {
-                    force = 0.25f;
+                    force = 1;
                 }
                 //Debug.Log(this.name + " force:" + force);
                 //if (doDebug) Debug.Log("force:" + force);
@@ -73,6 +93,29 @@ public partial class Particle : MonoBehaviour
                 interactionAcceleration += accel;
             }
 
+            if (myController.doAvgVelocityUpdate)
+            {
+                //Debug.Log("calc avg vel sqr");
+                myController.averageVelocitySqr /= myController.particles.Count;
+                myController.doAvgVelocityUpdate = false;
+            }
+
+            //doing these here is a hack but it's an optimisation
+            //should only run once per update loop due to the boolean check doAvgVelocityUpdate
+            if (logVelocities)
+            {
+                float standardDeviation = 0;
+                foreach (Particle otherParticle in myController.particles)
+                {
+                    standardDeviation += Mathf.Pow(otherParticle.velocity.sqrMagnitude - myController.averageVelocitySqr, 2);
+                }
+                standardDeviation /= myController.particles.Count - 1;
+                standardDeviation = Mathf.Sqrt(standardDeviation);
+                myController.sqrVelocityError.Add(standardDeviation);
+            }
+
+            //Debug.DrawLine(transform.position, transform.position + new Vector3(1, 0, 1), Color.green, 0.01f);
+            //Debug.DrawLine(transform.position, transform.position + new Vector3(1, 0, 0), Color.red, 0.01f);
             //display acceleration direction
             /*
             Vector3 accelNormed = interactionAcceleration;

@@ -16,7 +16,10 @@ public partial class SimController : MonoBehaviour
         boundsMin.z = -curLength / 2;
 
         //reset values
-        RandomGaussian.SetSigma(0.2f * (boundsMax.x - boundsMin.x));
+        //RandomGaussian.SetSigma(0.2f * (boundsMax.x - boundsMin.x));
+        //random starting velocity (gaussian and based off equipartition formula for thermal equilibrium)
+        //RandomGaussian.SetSigma(Mathf.Sqrt(1.38f * Mathf.Pow(10f, -23f) * Temp() / Particle.DefaultMass()));
+        RandomGaussian.SetSigma(Mathf.Sqrt(startingTemp / Particle.DefaultMass()));
         simTime = 0;
         particleMass.text = "Particle mass: " + Particle.DefaultMass();
         temp.text = "Temperature: " + Temp();
@@ -73,11 +76,13 @@ public partial class SimController : MonoBehaviour
 
         //debug text for one of the particles
         particles[0].doDebug = true;
+        particles[0].gameObject.GetComponent<Renderer>().material = RedMaterial;
 
         float rmsHorizontal = Mathf.Sqrt(squaredVelocitiesHorizontal) / (float)startingParticles;
         //Debug.Log("RMS: "+ rmsHorizontal);
-        particleVelocity.text = "RMS horiz velocity: " + rmsHorizontal;
+        //particleVelocity.text = "RMS horiz velocity: " + rmsHorizontal;
         squaredMeanVelocityHorizontal.Add(rmsHorizontal);
+        particleMass.text = "Particle mass: " + Particle.DefaultMass();
 
         //clear old walls
         while (walls.Count > 0)
@@ -115,5 +120,8 @@ public partial class SimController : MonoBehaviour
         newWallGameobject.transform.position = new Vector3(0, 0, boundsMax.z);
         newWallGameobject.transform.localScale = new Vector3(boundsMax.x - boundsMin.x, wallHeight, wallWidth);
         walls.Add(newWallGameobject);
+
+        sidelength.text = "Side length: " + curLength;
+        volume.text = "Volume length: " + curLength * curLength;
     }
 }

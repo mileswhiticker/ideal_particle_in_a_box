@@ -49,5 +49,28 @@ public partial class Particle : MonoBehaviour
         //a heat dissipation effect to gradually cool the simulation
         //doing x and z separately is crude but fast to calculate
         velocity *= 0.99f;
+        
+        //calculate net forces from all other particles
+        if (doDebug && false)
+        {
+            float totalDist = 0;
+            int numClose = 0;
+            foreach (Particle otherParticle in myController.particles)
+            {
+                if (otherParticle == this)
+                {
+                    //dont interact with yourself, you'll go blind
+                    continue;
+                }
+                float otherDistSqrd = (otherParticle.transform.position - this.transform.position).sqrMagnitude;
+                if (otherDistSqrd <= 2)
+                {
+                    numClose++;
+                    totalDist += otherDistSqrd;
+                }
+                continue;
+            }
+            Debug.Log("Average close dist: " + Mathf.Sqrt(totalDist / numClose) + " | " + numClose + " particles");
+        }
     }
 }

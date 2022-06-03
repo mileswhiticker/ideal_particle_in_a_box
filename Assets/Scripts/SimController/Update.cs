@@ -32,20 +32,50 @@ public partial class SimController : MonoBehaviour
             bottomForceText.text = "Force: " + avgForceBottom;
 
             //use force and walldims to calculate average pressure
-            leftPressureText.text = "Pressure: " + (avgForceLeft / (boundsMax.x - boundsMin.x));
-            rightPressureText.text = "Pressure: " + (avgForceRight / (boundsMax.x - boundsMin.x));
-            topPressureText.text = "Pressure: " + (avgForceTop / (boundsMax.z - boundsMin.z));
-            bottomPressureText.text = "Pressure: " + (avgForceBottom / (boundsMax.z - boundsMin.z));
+            avgPressureLeft = avgForceLeft / (boundsMax.x - boundsMin.x);
+            avgPressureRight = avgForceRight / (boundsMax.x - boundsMin.x);
+            avgPressureTop = avgForceTop / (boundsMax.z - boundsMin.z);
+            avgPressureBottom = avgForceBottom / (boundsMax.z - boundsMin.z);
+
+            leftPressureText.text = "Pressure: " + avgPressureLeft;
+            rightPressureText.text = "Pressure: " + avgPressureRight;
+            topPressureText.text = "Pressure: " + avgPressureTop;
+            bottomPressureText.text = "Pressure: " + avgPressureBottom;
 
             //calculate the average linear pressure on the 2D box
-            averagePressure = (avgForceLeft / (boundsMax.x - boundsMin.x) + (avgForceRight / (boundsMax.x - boundsMin.x)) + (avgForceTop / (boundsMax.z - boundsMin.z)) + (avgForceBottom / (boundsMax.z - boundsMin.z))) / 4;
+            averagePressure = (avgPressureLeft + avgPressureRight + avgPressureTop + avgPressureBottom) / 4;
             pressureText.text = "Avg pressure: " + averagePressure;
+
+            particleVelocity.text = "Average squared velocity: " + averageVelocitySqr;
+
+            UpdateTemp();
+
+            tLeftLogData -= Time.deltaTime;
         }
         else
         {
+            //stop this trial and get ready for the next one
             isSimRunning = false;
             if (!logCreated)
             {
+                //log this trial
+                Log.AddLine("\n");
+                /*
+                Log.AddLine("errors");
+                foreach (float curError in this.sqrVelocityError)
+                {
+                    Log.AddLine("" + curError + ",...");
+                }
+
+                Log.AddLine("");
+                Log.AddLine("uncertainty propogation factor");
+                float modifiedBoltzmann = 1.38f * Mathf.Pow(10, -3) * 4;
+                float propogatefactor = 0.5f * Particle.DefaultMass() * 2 / (3 * modifiedBoltzmann);
+                Log.AddLine("" + propogatefactor);
+                */
+                logCreated = true;
+
+                /*
                 //Log.AddLine("Length:" + curLength + ", pressure:" + averagePressure);
                 string dataLine = "" + averagePressure;
                 logCreated = true;
@@ -69,9 +99,10 @@ public partial class SimController : MonoBehaviour
                     {
                         dataLine += ",...";
                     }
-                }
-                Log.AddLine(dataLine);
+                }*/
+                //Log.AddLine(dataLine);
 
+                /*
                 //should we trial the current width?
                 if (trialIndex < trialMax)
                 {
@@ -86,7 +117,7 @@ public partial class SimController : MonoBehaviour
                     {
                         Log.AddLine("" + rms + ",...");
                     }
-                }
+                }*/
             }
         }
     }

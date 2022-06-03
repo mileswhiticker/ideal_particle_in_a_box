@@ -11,10 +11,14 @@ public partial class Particle : MonoBehaviour
     {
         return 1;//return Mathf.Pow(10f, -24f);
     }
-    private float mass = 1;
+    public float mass = 1;
     public float Mass()
     {
         return mass;
+    }
+    public static float Radius()
+    {
+        return 0.05f;
     }
     public void ToggleRunning()
     {
