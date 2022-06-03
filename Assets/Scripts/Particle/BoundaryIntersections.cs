@@ -13,6 +13,8 @@ public partial class Particle : MonoBehaviour
         do
         {
             outOfBounds = false;
+
+            //x axis
             if (myController.BoundsMin().x > transform.position.x)
             {
                 //out of bounds left
@@ -31,6 +33,28 @@ public partial class Particle : MonoBehaviour
                 myController.BumpRight(this);
                 velocity.x = -velocity.x;
             }
+
+            //y axis
+            if (myController.BoundsMin().y > transform.position.y)
+            {
+                //out of bounds below
+                outOfBounds = true;
+                float extra = myController.BoundsMin().y - transform.position.y;
+                transform.position = new Vector3(transform.position.x, myController.BoundsMin().y + extra, transform.position.z);
+                myController.BumpBelow(this);
+                velocity.y = -velocity.y;
+            }
+            if (myController.BoundsMax().y < transform.position.y)
+            {
+                //out of bounds above
+                outOfBounds = true;
+                float extra = transform.position.y - myController.BoundsMax().y;
+                transform.position = new Vector3(transform.position.x, myController.BoundsMax().y - extra, transform.position.z);
+                myController.BumpAbove(this);
+                velocity.y = -velocity.y;
+            }
+
+            //z axis
             if (myController.BoundsMax().z < transform.position.z)
             {
                 //out of bounds top

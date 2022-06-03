@@ -11,9 +11,12 @@ public partial class SimController : MonoBehaviour
         logCreated = false;
 
         boundsMax.x = curLength / 2;
+        boundsMax.y = curLength / 2;
         boundsMax.z = curLength / 2;
         boundsMin.x = -curLength / 2;
+        boundsMin.y = -curLength / 2;
         boundsMin.z = -curLength / 2;
+        ground.transform.position = new Vector3(0, boundsMin.y, 0);
 
         //reset values
         //RandomGaussian.SetSigma(0.2f * (boundsMax.x - boundsMin.x));
@@ -37,8 +40,21 @@ public partial class SimController : MonoBehaviour
         int particlesLeft = startingParticles;
 
         //layout particles on a grid to avoid exploding from interaction forces
-        float gridDims = Mathf.Sqrt(startingParticles);
-        gridDims = Mathf.Ceil(gridDims);
+        float gridDims;
+        if(DoSimulate3D())
+        { 
+            gridDims = Mathf.Pow(startingParticles, 1f / 3f);
+        }
+        else
+        {
+            gridDims = Mathf.Pow(startingParticles, 1f / 2f);
+        }
+
+        if(gridDims != Mathf.Round(gridDims))
+        {
+            gridDims = Mathf.Round(gridDims);
+        }
+
         if (gridDims < 2)
         {
             gridDims = 2;
@@ -52,23 +68,43 @@ public partial class SimController : MonoBehaviour
         {
             for (int j = 0; j < gridDims; j++)
             {
-                //create the next one
-                Vector3 gridPos = new Vector3(i * cellWidth - curLength/2 + cellWidth/2, 0, j * cellWidth - curLength/2 + cellWidth/2);
+                for (int k = 0; k < gridDims; k++)
+                {
+                    //none left
+                    if (particlesLeft <= 0)
+                    {
+                        float numNeeded = gridDims * gridDims;
+                        if (DoSimulate3D())
+                        {
+                            numNeeded *= gridDims;
+                        }
+                        Debug.LogWarning("Insufficient particles to neatly distribute over grid with cell width " + gridDims + ", have " + startingParticles + "/" + numNeeded);
+                        particlesLeft--;
+                        break;
+                    }
 
-                particlesLeft--;
-                Particle curParticle = CreateParticle(gridPos);
-                curParticle.gameObject.name = "Particle #" + (startingParticles - particlesLeft);
-                squaredVelocitiesHorizontal += curParticle.velocity.x * curParticle.velocity.x;
-                //Debug.Log(curParticle.velocity.x * curParticle.velocity.x);
+                    //create the next one
+                    Vector3 gridPos = new Vector3(i * cellWidth - curLength / 2 + cellWidth / 2, k, j * cellWidth - curLength / 2 + cellWidth / 2);
 
-                //none left
-                if (particlesLeft <= 0)
+                    particlesLeft--;
+                    Particle curParticle = CreateParticle(gridPos);
+                    curParticle.gameObject.name = "Particle #" + (startingParticles - particlesLeft);
+                    squaredVelocitiesHorizontal += curParticle.velocity.x * curParticle.velocity.x;
+                    //Debug.Log(curParticle.velocity.x * curParticle.velocity.x);
+
+                    //only do the bottom layer if we are not doing 3D
+                    if (!DoSimulate3D())
+                    {
+                        break;
+                    }
+                }
+                if (particlesLeft < 0)
                 {
                     break;
                 }
             }
             //none left
-            if (particlesLeft <= 0)
+            if (particlesLeft < 0)
             {
                 break;
             }
@@ -76,7 +112,7 @@ public partial class SimController : MonoBehaviour
 
         //debug text for one of the particles
         particles[0].doDebug = true;
-        particles[0].gameObject.GetComponent<Renderer>().material = RedMaterial;
+        particles[0].gameObject.GetComponent<Renderer>().material = GreenMaterial;
 
         float rmsHorizontal = Mathf.Sqrt(squaredVelocitiesHorizontal) / (float)startingParticles;
         //Debug.Log("RMS: "+ rmsHorizontal);
@@ -121,7 +157,7 @@ public partial class SimController : MonoBehaviour
         newWallGameobject.transform.localScale = new Vector3(boundsMax.x - boundsMin.x, wallHeight, wallWidth);
         walls.Add(newWallGameobject);
 
-        sidelength.text = "Side length: " + curLength;
-        volume.text = "Volume length: " + curLength * curLength;
+        sidelength.text = "Side dimensions: " + curLength;
+        volume.text = "Volume: " + curLength * curLength * curLength;
     }
 }

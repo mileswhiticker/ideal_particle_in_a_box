@@ -23,11 +23,17 @@ public partial class SimController : MonoBehaviour
         newParticle.Initialize();
 
         //random position (uniform)
-        newPrefab.transform.position = new Vector3(Random.Range(boundsMin.x * 0.9f, boundsMax.x * 0.9f), 0, Random.Range(boundsMin.z * 0.9f, boundsMax.z * 0.9f));
+        //newPrefab.transform.position = new Vector3(Random.Range(boundsMin.x * 0.9f, boundsMax.x * 0.9f), 0, Random.Range(boundsMin.z * 0.9f, boundsMax.z * 0.9f));
         //newPrefab.transform.position = new Vector3(0, 0, 0);
 
-        newParticle.velocity = new Vector3(RandomGaussian.Generate(), 0, RandomGaussian.Generate());
-        //newParticle.velocity = new Vector3(200, 0, 100);
+        Vector3 startingVelocity = new Vector3(RandomGaussian.Generate(), 0, RandomGaussian.Generate());
+        if(DoSimulate3D())
+        {
+            startingVelocity.y = RandomGaussian.Generate();
+            //Debug.Log("startingVelocity:" + startingVelocity);
+        }
+        newParticle.velocity = startingVelocity;
+        //newParticle.velocity = new Vector3(0, 0, 0);
         newParticle.speed = newParticle.velocity.magnitude;
         newParticle.mass = Particle.DefaultMass();
         //Debug.Log("Speed: " + newParticle.speed);

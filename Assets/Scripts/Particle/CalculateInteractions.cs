@@ -9,31 +9,32 @@ public partial class Particle : MonoBehaviour
 {
     protected void CalculateInteractions()
     {
-        interactionAcceleration = new Vector3();
+        interactionAcceleration = new Vector3(0,0,0);
+        //if (doDebug) Debug.Log("1 interactionAcceleration:" + interactionAcceleration);
         if (myController.DoInteractions())
         {
             bool logVelocities = false;
-            List<float> velocities = null;
+            List<float> sqrvelocities = null;
             if (myController.tLeftLogData <= 0)
             {
                 logVelocities = true;
                 myController.tLeftLogData = myController.logDataInterval;
-                velocities = new List<float>();
-                myController.squaredVelocities.Add(velocities);
+                sqrvelocities = new List<float>();
+                myController.squaredVelocities.Add(sqrvelocities);
                 //Log.AddLine("" + myController.currentTemp + ",...");
-                Log.AddLine("" + myController.averagePressure + ",...");
+                //Log.AddLine("" + myController.averagePressure + ",...");
             }
 
             //calculate net forces from all other particles
             foreach (Particle otherParticle in myController.particles)
             {
-                if (myController.doAvgVelocityUpdate)
-                {
-                    myController.averageVelocitySqr += otherParticle.velocity.sqrMagnitude;
-                }
                 if(logVelocities)
                 {
-                    velocities.Add(otherParticle.velocity.sqrMagnitude);
+                    sqrvelocities.Add(otherParticle.velocity.sqrMagnitude);
+                }
+                if(myController.doAvgVelocityUpdate)
+                {
+                    myController.averageVelocitySqr += otherParticle.velocity.sqrMagnitude;
                 }
                 if (otherParticle == this)
                 {
@@ -55,15 +56,23 @@ public partial class Particle : MonoBehaviour
                 //calculate the force due to interaction
                 //use coulomb potential 1/r^4 - 1/r^2
                 float distSquared = posDelta.x * posDelta.x + posDelta.z * posDelta.z;
+                if(myController.DoSimulate3D())
+                {
+                    distSquared += posDelta.y * posDelta.y;
+                }
 
                 //for optimisation: only calculate nearby particles
-                if(distSquared > 1)
+                if (distSquared > 1)
                 {
                     //continue;
                 }
 
                 //if (doDebug) Debug.Log("distSquared:" + distSquared);
-                float force = 1 / (10 * distSquared * distSquared) - 1 / (10 * distSquared);
+                float force = 0;
+                if (distSquared != 0)
+                {
+                    force = 1 / (10 * distSquared * distSquared) - 1 / (10 * distSquared);
+                }
                 if(force > 1)
                 {
                     force = 1;
@@ -73,32 +82,45 @@ public partial class Particle : MonoBehaviour
 
                 //calculate the acceleration
                 float accelMagnitude = force / Mass();
-                //if (doDebug) Debug.Log("accelMagnitude:" + accelMagnitude);
 
                 //work out the acceleration vector
-
                 //tan(theta) = opp/adj
                 //:. theta = atan(opp/adj)
                 //float theta = Mathf.Atan(posDelta.x / posDelta.z);
-                float angle = (float)Math.Atan2(posDelta.x, posDelta.z);
-                floatText.text = "" + angle;
-                //if (doDebug) Debug.Log("angle:" + angle);
-                //Debug.Log(this.name + " theta:" + angle);
+                //use Atan2 to automatically convert between different quadrants
+                //float angle = (float)Math.Atan2(posDelta.x, posDelta.z);
+                //floatText.text = "" + angle;
 
                 //cos(theta) = adj/hyp
                 //:. adj = hyp*cos(theta)
                 //:. opp = hyp*sin(theta)
-                Vector3 accel = new Vector3(-accelMagnitude * Mathf.Sin(angle), 0, -accelMagnitude * Mathf.Cos(angle));
-                //if (doDebug) Debug.Log("accel:" + accel);
+                //Vector3 accel = new Vector3(-accelMagnitude * Mathf.Sin(angle), 0, -accelMagnitude * Mathf.Cos(angle));
+                Vector3 accel = posDelta.normalized * accelMagnitude * -1;
+                //if (doDebug) Debug.Log("accelMagnitude:" + accelMagnitude + " Mathf.Cos(angle):" + Mathf.Cos(angle) + " Mathf.Sin(angle):" + Mathf.Sin(angle));
+                //if (doDebug) Debug.Log(-accelMagnitude * Mathf.Sin(angle));
+
+                //have unity handle the spatial transformations for us
+                //this.transform.LookAt(otherParticle.transform.position);
+                //a positive force is away from the other particle
+                //Vector3 accel = transform.forward * accelMagnitude * -1;
+                //Debug.DrawLine(transform.position, transform.position + transform.rotation.eulerAngles, Color.green, 0.01f);
+
+                //if (myController.DoSimulate3D())
+                {
+                    //treat the y dimension as a single separate axis
+                    //not sure if this will work
+                    //distSquared = posDelta.y * posDelta.y;
+                    //force = 1 / (10 * distSquared * distSquared) - 1 / (10 * distSquared);
+                    //accel.y = force / Mass();
+                    //Debug.Log("accel.y:" + accel.y);
+                }
+
+                //if (doDebug) Debug.Log("accelMagnitude:" + accelMagnitude + " force:" + force + " distSquared:" + distSquared + " posDelta:" + posDelta + " accel2:" + accel);
+
                 interactionAcceleration += accel;
             }
-
-            if (myController.doAvgVelocityUpdate)
-            {
-                //Debug.Log("calc avg vel sqr");
-                myController.averageVelocitySqr /= myController.particles.Count;
-                myController.doAvgVelocityUpdate = false;
-            }
+            //if (doDebug) Debug.Log("2 interactionAcceleration:" + interactionAcceleration);
+            //Debug.DrawLine(transform.position, transform.position + interactionAcceleration, Color.green, interactionAcceleration.magnitude);
 
             //doing these here is a hack but it's an optimisation
             //should only run once per update loop due to the boolean check doAvgVelocityUpdate
@@ -114,17 +136,19 @@ public partial class Particle : MonoBehaviour
                 myController.sqrVelocityError.Add(standardDeviation);
             }
 
+            //Debug.Log("3 interactionAcceleration:" + interactionAcceleration);
+
             //Debug.DrawLine(transform.position, transform.position + new Vector3(1, 0, 1), Color.green, 0.01f);
             //Debug.DrawLine(transform.position, transform.position + new Vector3(1, 0, 0), Color.red, 0.01f);
             //display acceleration direction
-            /*
             Vector3 accelNormed = interactionAcceleration;
             if(interactionAcceleration.sqrMagnitude > 0)
             {
                 accelNormed.Normalize();
-                Debug.DrawLine(transform.position, transform.position + accelNormed * 0.2f, Color.green, 0.01f);
+                //Debug.DrawLine(transform.position, transform.position + transform.rotation.eulerAngles, Color.green, 0.01f);
             }
-            */
+
+            //Debug.Log("4 interactionAcceleration:" + interactionAcceleration);
         }
     }
 }

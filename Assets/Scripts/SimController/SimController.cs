@@ -5,11 +5,15 @@ using UnityEngine.UI;
 
 public partial class SimController : MonoBehaviour
 {
-    public bool doAvgVelocityUpdate = false;
+    public bool doAvgVelocityUpdate = true;
     public float averageVelocitySqr = 0;
+    public float averageVelocitySqrError = 0;
+
     public Material RedMaterial;
-    private int startingParticles = 100;
-    private float timeMax = 99999;
+    public Material YellowMaterial;
+    public Material GreenMaterial;
+    private int startingParticles = 125;
+    private float timeMax = 60;
     private float startingTemp = 300f;  //kelvin
     public float currentTemp = 300;
     public Text particleVelocity;
@@ -17,14 +21,25 @@ public partial class SimController : MonoBehaviour
     public Text temp;
     public Text sidelength;
     public Text volume;
+    public GameObject ground;
     //private int trialIndex = 0;
     private int trialMax = 1;
     //private int widthIndex = 0;
+    private bool doSimulate3D = true;
+    public bool DoSimulate3D()
+    {
+        return doSimulate3D;
+    }
     private List<float> trialWidths = new List<float>();
     private List<GameObject> walls = new List<GameObject>();
     private bool doInteractions = true;
+
+    public List<float> horizontalPressures = new List<float>();
+    public List<float> skyPressures = new List<float>();
+    public List<float> groundPressures = new List<float>();
     public List<List<float>> squaredVelocities = new List<List<float>>();
     public List<float> sqrVelocityError = new List<float>();
+
     public float tLeftLogData = 0.1f;
     public float logDataInterval = 0.1f;
     public bool DoInteractions()
@@ -86,21 +101,43 @@ public partial class SimController : MonoBehaviour
     //
     public float avgForceLeft = 0;
     public float avgForceRight = 0;
+    public float avgForceAbove = 0;
+    public float avgForceBelow = 0;
     public float avgForceTop = 0;
     public float avgForceBottom = 0;
     //
     public Text leftForceText;
+    public Text aboveForceText;
+    public Text belowForceText;
     public Text rightForceText;
     public Text topForceText;
     public Text bottomForceText;
     //
     public float avgPressureLeft = 0;
     public float avgPressureRight = 0;
+    public float avgPressureAbove = 0;
+    public float avgPressureBelow = 0;
     public float avgPressureTop = 0;
     public float avgPressureBottom = 0;
     //
+    public Text leftText;
+    public Text rightText;
+    public Text aboveImpulseText;
+    public Text belowImpulseText;
+    public Text topText;
+    public Text bottomText;
+    //
+    public float totalImpulseAbove = 0;
+    public float totalImpulseBelow = 0;
+    public float totalImpulseLeft = 0;
+    public float totalImpulseRight = 0;
+    public float totalImpulseTop = 0;
+    public float totalImpulseBottom = 0;
+    //
     public Text leftPressureText;
     public Text rightPressureText;
+    public Text abovePressureText;
+    public Text belowPressureText;
     public Text topPressureText;
     public Text bottomPressureText;
     public float averagePressure;

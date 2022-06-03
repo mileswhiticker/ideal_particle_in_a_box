@@ -23,31 +23,41 @@ public partial class SimController : MonoBehaviour
             //calculate average force on each wall
             avgForceLeft = totalImpulseLeft / simTime;
             avgForceRight = totalImpulseRight / simTime;
+            avgForceAbove = totalImpulseAbove / simTime;
+            avgForceBelow = totalImpulseBelow / simTime;
             avgForceTop = totalImpulseTop / simTime;
             avgForceBottom = totalImpulseBottom / simTime;
             //
             leftForceText.text = "Force: " + avgForceLeft;
             rightForceText.text = "Force: " + avgForceRight;
+            aboveForceText.text = "Force: " + avgForceAbove;
+            belowForceText.text = "Force: " + avgForceBelow;
             topForceText.text = "Force: " + avgForceTop;
             bottomForceText.text = "Force: " + avgForceBottom;
 
             //use force and walldims to calculate average pressure
             avgPressureLeft = avgForceLeft / (boundsMax.x - boundsMin.x);
             avgPressureRight = avgForceRight / (boundsMax.x - boundsMin.x);
+            avgPressureAbove = avgForceAbove / (boundsMax.y - boundsMin.y);
+            avgPressureBelow = avgForceBelow / (boundsMax.y - boundsMin.y);
             avgPressureTop = avgForceTop / (boundsMax.z - boundsMin.z);
             avgPressureBottom = avgForceBottom / (boundsMax.z - boundsMin.z);
 
             leftPressureText.text = "Pressure: " + avgPressureLeft;
             rightPressureText.text = "Pressure: " + avgPressureRight;
+            abovePressureText.text = "Pressure: " + avgPressureAbove;
+            belowPressureText.text = "Pressure: " + avgPressureBelow;
             topPressureText.text = "Pressure: " + avgPressureTop;
             bottomPressureText.text = "Pressure: " + avgPressureBottom;
 
             //calculate the average linear pressure on the 2D box
-            averagePressure = (avgPressureLeft + avgPressureRight + avgPressureTop + avgPressureBottom) / 4;
+            averagePressure = (avgPressureLeft + avgPressureRight + avgPressureTop + avgPressureBottom + avgPressureAbove + avgPressureBelow) / 6;
             pressureText.text = "Avg pressure: " + averagePressure;
-
             particleVelocity.text = "Average squared velocity: " + averageVelocitySqr;
 
+
+            //update other stuff
+            UpdateCosmicRays();
             UpdateTemp();
 
             tLeftLogData -= Time.deltaTime;
@@ -59,16 +69,15 @@ public partial class SimController : MonoBehaviour
             if (!logCreated)
             {
                 //log this trial
-                Log.AddLine("\n");
-                /*
-                Log.AddLine("errors");
+                /*Log.AddLine("errors");
                 foreach (float curError in this.sqrVelocityError)
                 {
                     Log.AddLine("" + curError + ",...");
                 }
+                */
 
                 Log.AddLine("");
-                Log.AddLine("uncertainty propogation factor");
+                /*Log.AddLine("uncertainty propogation factor");
                 float modifiedBoltzmann = 1.38f * Mathf.Pow(10, -3) * 4;
                 float propogatefactor = 0.5f * Particle.DefaultMass() * 2 / (3 * modifiedBoltzmann);
                 Log.AddLine("" + propogatefactor);
