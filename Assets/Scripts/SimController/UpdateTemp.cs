@@ -35,6 +35,7 @@ public partial class SimController : MonoBehaviour
         currentTemp = (2 * netKinetic) / (3 * modifiedBoltzmann);
 
         temp.text = "Temperature: " + currentTemp;
+        particleVelocity.text = "Average squared velocity: " + averageVelocitySqr;
         doAvgVelocityUpdate = true;
         averageVelocitySqr = 0;
     }

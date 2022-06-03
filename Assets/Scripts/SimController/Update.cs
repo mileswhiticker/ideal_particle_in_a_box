@@ -17,44 +17,12 @@ public partial class SimController : MonoBehaviour
         {
             simTime += SimDeltaTime();  //1/60 sec by default
             runningTime += SimDeltaTime();
+
             timeText.text = "Trial time: " + simTime;
             runningTimeText.text = "Running time: " + runningTime;
 
-            //calculate average force on each wall
-            avgForceLeft = totalImpulseLeft / simTime;
-            avgForceRight = totalImpulseRight / simTime;
-            avgForceAbove = totalImpulseAbove / simTime;
-            avgForceBelow = totalImpulseBelow / simTime;
-            avgForceTop = totalImpulseTop / simTime;
-            avgForceBottom = totalImpulseBottom / simTime;
-            //
-            leftForceText.text = "Force: " + avgForceLeft;
-            rightForceText.text = "Force: " + avgForceRight;
-            aboveForceText.text = "Force: " + avgForceAbove;
-            belowForceText.text = "Force: " + avgForceBelow;
-            topForceText.text = "Force: " + avgForceTop;
-            bottomForceText.text = "Force: " + avgForceBottom;
-
-            //use force and walldims to calculate average pressure
-            avgPressureLeft = avgForceLeft / (boundsMax.x - boundsMin.x);
-            avgPressureRight = avgForceRight / (boundsMax.x - boundsMin.x);
-            avgPressureAbove = avgForceAbove / (boundsMax.y - boundsMin.y);
-            avgPressureBelow = avgForceBelow / (boundsMax.y - boundsMin.y);
-            avgPressureTop = avgForceTop / (boundsMax.z - boundsMin.z);
-            avgPressureBottom = avgForceBottom / (boundsMax.z - boundsMin.z);
-
-            leftPressureText.text = "Pressure: " + avgPressureLeft;
-            rightPressureText.text = "Pressure: " + avgPressureRight;
-            abovePressureText.text = "Pressure: " + avgPressureAbove;
-            belowPressureText.text = "Pressure: " + avgPressureBelow;
-            topPressureText.text = "Pressure: " + avgPressureTop;
-            bottomPressureText.text = "Pressure: " + avgPressureBottom;
-
-            //calculate the average linear pressure on the 2D box
-            averagePressure = (avgPressureLeft + avgPressureRight + avgPressureTop + avgPressureBottom + avgPressureAbove + avgPressureBelow) / 6;
-            pressureText.text = "Avg pressure: " + averagePressure;
-            particleVelocity.text = "Average squared velocity: " + averageVelocitySqr;
-
+            //update most of the simulation values
+            UpdateValues();
 
             //update other stuff
             UpdateCosmicRays();
