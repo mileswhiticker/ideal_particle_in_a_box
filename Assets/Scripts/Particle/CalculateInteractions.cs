@@ -15,7 +15,7 @@ public partial class Particle : MonoBehaviour
         {
             bool logVelocities = false;
             List<float> sqrvelocities = null;
-            if (myController.tLeftLogData <= 0)
+            if (myController.TLeftLogData() <= 0)
             {
                 logVelocities = true;
                 sqrvelocities = new List<float>();
@@ -25,6 +25,8 @@ public partial class Particle : MonoBehaviour
             }
 
             //calculate net forces from all other particles
+            float nearbyDistSqr = 0;
+            float numContributing = 0;
             foreach (Particle otherParticle in myController.particles)
             {
                 if(logVelocities)
@@ -76,48 +78,30 @@ public partial class Particle : MonoBehaviour
                 {
                     force = 1;
                 }
-                //Debug.Log(this.name + " force:" + force);
-                //if (doDebug) Debug.Log("force:" + force);
 
                 //calculate the acceleration
                 float accelMagnitude = force / Mass();
 
-                //work out the acceleration vector
-                //tan(theta) = opp/adj
-                //:. theta = atan(opp/adj)
-                //float theta = Mathf.Atan(posDelta.x / posDelta.z);
-                //use Atan2 to automatically convert between different quadrants
-                //float angle = (float)Math.Atan2(posDelta.x, posDelta.z);
-                //floatText.text = "" + angle;
-
-                //cos(theta) = adj/hyp
-                //:. adj = hyp*cos(theta)
-                //:. opp = hyp*sin(theta)
-                //Vector3 accel = new Vector3(-accelMagnitude * Mathf.Sin(angle), 0, -accelMagnitude * Mathf.Cos(angle));
                 Vector3 accel = posDelta.normalized * accelMagnitude * -1;
-                //if (doDebug) Debug.Log("accelMagnitude:" + accelMagnitude + " Mathf.Cos(angle):" + Mathf.Cos(angle) + " Mathf.Sin(angle):" + Mathf.Sin(angle));
-                //if (doDebug) Debug.Log(-accelMagnitude * Mathf.Sin(angle));
-
-                //have unity handle the spatial transformations for us
-                //this.transform.LookAt(otherParticle.transform.position);
-                //a positive force is away from the other particle
-                //Vector3 accel = transform.forward * accelMagnitude * -1;
-                //Debug.DrawLine(transform.position, transform.position + transform.rotation.eulerAngles, Color.green, 0.01f);
-
-                //if (myController.DoSimulate3D())
-                {
-                    //treat the y dimension as a single separate axis
-                    //not sure if this will work
-                    //distSquared = posDelta.y * posDelta.y;
-                    //force = 1 / (10 * distSquared * distSquared) - 1 / (10 * distSquared);
-                    //accel.y = force / Mass();
-                    //Debug.Log("accel.y:" + accel.y);
-                }
-
-                //if (doDebug) Debug.Log("accelMagnitude:" + accelMagnitude + " force:" + force + " distSquared:" + distSquared + " posDelta:" + posDelta + " accel2:" + accel);
 
                 interactionAcceleration += accel;
+
+                //calculate the distance of the nearest particles
+                if(distSquared <= 1.5)
+                {
+                    nearbyDistSqr += distSquared;
+                    numContributing++;
+                }
             }
+
+            //what is our average distance?
+            if(numContributing > 0)
+            {
+                nearbyDistSqr /= numContributing;
+                myController.currentParticleDistSqr += nearbyDistSqr;
+                myController.numParticlesContributingToDistSqr++;
+            }
+
             //if (doDebug) Debug.Log("2 interactionAcceleration:" + interactionAcceleration);
             //Debug.DrawLine(transform.position, transform.position + interactionAcceleration, Color.green, interactionAcceleration.magnitude);
 

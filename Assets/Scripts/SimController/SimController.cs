@@ -21,6 +21,7 @@ public partial class SimController : MonoBehaviour
     public Text temp;
     public Text sidelength;
     public Text volume;
+    public Text avgParticleDist;
     public GameObject ground;
     //private int trialIndex = 0;
     private int trialMax = 1;
@@ -37,11 +38,27 @@ public partial class SimController : MonoBehaviour
     public List<float> horizontalPressures = new List<float>();
     public List<float> skyPressures = new List<float>();
     public List<float> groundPressures = new List<float>();
+    public List<float> avgPressures = new List<float>();
     public List<List<float>> squaredVelocities = new List<List<float>>();
     public List<float> sqrVelocityError = new List<float>();
 
-    public float tLeftLogData = 0.1f;
-    public float logDataInterval = 0.1f;
+    private List<int> RayCollisions = new List<int>();
+    private List<int> RaysEmitted = new List<int>();
+    private int numRayCollissionsThisTick = 0;
+    private int numRaysThisTick = 0;
+    private float tLeftLogDataRays = 4.9f;
+    private float logDataIntervalRays = 5f;
+
+    public List<float> avgParticleDistSqr = new List<float>();
+    public float currentParticleDistSqr = 0;
+    public int numParticlesContributingToDistSqr = 0;
+
+    private float tLeftLogData = -0.1f;
+    public float TLeftLogData()
+    {
+        return tLeftLogData;
+    }
+    private float logDataInterval = 1f;
     public bool DoInteractions()
     {
         return doInteractions;

@@ -377,6 +377,85 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 221624103}
   m_CullTransparentMesh: 1
+--- !u!1 &251390298
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 251390299}
+  - component: {fileID: 251390301}
+  - component: {fileID: 251390300}
+  m_Layer: 5
+  m_Name: disttext
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &251390299
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 251390298}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2067997672}
+  m_RootOrder: 34
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -276, y: 199.30002}
+  m_SizeDelta: {x: 200, y: 30}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &251390300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 251390298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 18
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 1
+    m_MaxSize: 40
+    m_Alignment: 0
+    m_AlignByGeometry: 0
+    m_RichText: 0
+    m_HorizontalOverflow: 1
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: "Avg particle dist: \n"
+--- !u!222 &251390301
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 251390298}
+  m_CullTransparentMesh: 1
 --- !u!1 &264991250
 GameObject:
   m_ObjectHideFlags: 0
@@ -2573,6 +2652,7 @@ MonoBehaviour:
   oldObjects: []
   doAvgVelocityUpdate: 0
   averageVelocitySqr: 0
+  averageVelocitySqrError: 0
   RedMaterial: {fileID: 2100000, guid: 98db54b223f965846aebd4be43612c3f, type: 2}
   YellowMaterial: {fileID: 2100000, guid: 0e6fadbc44b652a4888369332ac81f32, type: 2}
   GreenMaterial: {fileID: 2100000, guid: 3f1e8a74e56bbfb498c85283bda37265, type: 2}
@@ -2583,9 +2663,14 @@ MonoBehaviour:
   sidelength: {fileID: 2094551228}
   volume: {fileID: 117638391}
   ground: {fileID: 81197071}
+  horizontalPressures: []
+  skyPressures: []
+  groundPressures: []
+  avgPressures: []
   sqrVelocityError: []
-  tLeftLogData: 0.1
-  logDataInterval: 0.1
+  avgParticleDistSqr: []
+  currentParticleDistSqr: 0
+  numParticlesContributingToDistSqr: 0
   particles: []
   particlePrefab: {fileID: 7662417800910605, guid: 69c9c189f8401be42922d9f10a6211ee, type: 3}
   wallPrefab: {fileID: 4938052018812380180, guid: 242728373123c2d4bbfbae017b3a8e19, type: 3}
@@ -3408,6 +3493,7 @@ RectTransform:
   - {fileID: 865467939}
   - {fileID: 440970891}
   - {fileID: 525795112}
+  - {fileID: 251390299}
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}

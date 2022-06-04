@@ -45,12 +45,20 @@ public partial class SimController : MonoBehaviour
         //
         pressureText.text = "Avg pressure: " + averagePressure;
 
+        currentParticleDistSqr /= (float)numParticlesContributingToDistSqr;
+        avgParticleDistSqr.Add(currentParticleDistSqr);
+        avgParticleDist.text = "Avg particle dist sqr: " + currentParticleDistSqr;
+
+        numParticlesContributingToDistSqr = 0;
+        currentParticleDistSqr = 0;
+
         //some logging
         if (tLeftLogData < 0)
         {
             skyPressures.Add(avgPressureAbove);
             groundPressures.Add(avgPressureBelow);
             horizontalPressures.Add((avgPressureLeft + avgPressureRight + avgPressureTop + avgPressureBottom) / 4);
+            avgPressures.Add(averagePressure);
         }
     }
 }

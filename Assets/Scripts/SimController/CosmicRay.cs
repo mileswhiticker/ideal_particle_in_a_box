@@ -38,7 +38,9 @@ public partial class SimController : MonoBehaviour
         oldObjects.Add(ray);
         LineRenderer line = ray.AddComponent<LineRenderer>();
         Vector3 startPos = new Vector3(Random.Range(-curLength/2, curLength/2), curLength, Random.Range(-curLength/2, curLength/2));
-        Vector3 targetPos = new Vector3(Random.Range(-curLength/2, curLength/2), -curLength / 2, Random.Range(-curLength/2, curLength/2));
+        //Vector3 targetPos = new Vector3(Random.Range(-curLength/2, curLength/2), -curLength / 2, Random.Range(-curLength/2, curLength/2));
+        Vector3 targetPos = new Vector3(startPos.x, -curLength / 2, startPos.z);
+        numRaysThisTick++;
 
         int layermask = 1 << 6;
         RaycastHit hitinfo = new RaycastHit();
@@ -61,7 +63,9 @@ public partial class SimController : MonoBehaviour
             explosion.transform.position = targetPos;
             explosion.GetComponent<Renderer>().material = RedMaterial;
             oldObjects.Add(explosion);
-            //Debug.Log("hit!");
+
+            //increment the counter
+            numRayCollissionsThisTick++;
         }
 
         line.SetPosition(0, startPos);

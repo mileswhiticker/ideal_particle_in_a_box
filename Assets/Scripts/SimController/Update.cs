@@ -23,6 +23,17 @@ public partial class SimController : MonoBehaviour
             simTime += SimDeltaTime();  //1/60 sec by default
             runningTime += SimDeltaTime();
 
+            tLeftLogDataRays -= Time.deltaTime;
+            if(tLeftLogDataRays <= 0)
+            {
+                tLeftLogDataRays = logDataIntervalRays;
+                RayCollisions.Add(numRayCollissionsThisTick);
+                numRayCollissionsThisTick = 0;
+
+                RaysEmitted.Add(numRaysThisTick);
+                numRaysThisTick = 0;
+            }
+
             timeText.text = "Trial time: " + simTime;
             runningTimeText.text = "Running time: " + runningTime;
 

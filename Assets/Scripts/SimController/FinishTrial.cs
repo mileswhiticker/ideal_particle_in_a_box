@@ -9,23 +9,58 @@ public partial class SimController : MonoBehaviour
 {
     protected void FinishTrial()
     {
-            if (!logCreated)
-            {
-                //log this trial
-                /*Log.AddLine("errors");
-                foreach (float curError in this.sqrVelocityError)
-                {
-                    Log.AddLine("" + curError + ",...");
-                }
-                */
+        if (!logCreated)
+        {
+            logCreated = true;
 
-                Log.AddLine("");
-                /*Log.AddLine("uncertainty propogation factor");
-                float modifiedBoltzmann = 1.38f * Mathf.Pow(10, -3) * 4;
-                float propogatefactor = 0.5f * Particle.DefaultMass() * 2 / (3 * modifiedBoltzmann);
-                Log.AddLine("" + propogatefactor);
-                */
-                logCreated = true;
+            //log this trial
+            Log.AddLine("emits per tick");
+            foreach (float curVal in RaysEmitted)
+            {
+                Log.AddLine("" + curVal + ",...");
+            }
+            Log.AddLine("collisions per tick");
+            foreach (float curVal in RayCollisions)
+            {
+                Log.AddLine("" + curVal + ",...");
+            }
+
+
+            /*Log.AddLine("average distance");
+            foreach(float curVal in avgParticleDistSqr)
+            {
+                Log.AddLine("" + curVal + ",...");
+            }*/
+
+            /*
+            //pressures
+            Log.AddLine("skyPressures");
+            foreach (float curVal in skyPressures)
+            {
+                Log.AddLine("" + curVal + ",...");
+            }
+            Log.AddLine("groundPressures");
+            foreach (float curVal in groundPressures)
+            {
+                Log.AddLine("" + curVal + ",...");
+            }
+            Log.AddLine("horizontalPressures");
+            foreach (float curVal in horizontalPressures)
+            {
+                Log.AddLine("" + curVal + ",...");
+            }
+            Log.AddLine("avgPressures");
+            foreach (float curVal in avgPressures)
+            {
+                Log.AddLine("" + curVal + ",...");
+            }
+            */
+
+            /*Log.AddLine("uncertainty propogation factor");
+            float modifiedBoltzmann = 1.38f * Mathf.Pow(10, -3) * 4;
+            float propogatefactor = 0.5f * Particle.DefaultMass() * 2 / (3 * modifiedBoltzmann);
+            Log.AddLine("" + propogatefactor);
+            */
 
             /*
             //Log.AddLine("Length:" + curLength + ", pressure:" + averagePressure);
