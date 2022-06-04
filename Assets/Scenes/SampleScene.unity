@@ -2662,12 +2662,14 @@ MonoBehaviour:
   temp: {fileID: 446788671}
   sidelength: {fileID: 2094551228}
   volume: {fileID: 117638391}
+  avgParticleDist: {fileID: 251390300}
   ground: {fileID: 81197071}
   horizontalPressures: []
   skyPressures: []
   groundPressures: []
   avgPressures: []
   sqrVelocityError: []
+  temps: []
   avgParticleDistSqr: []
   currentParticleDistSqr: 0
   numParticlesContributingToDistSqr: 0

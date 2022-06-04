@@ -59,6 +59,7 @@ public partial class SimController : MonoBehaviour
             groundPressures.Add(avgPressureBelow);
             horizontalPressures.Add((avgPressureLeft + avgPressureRight + avgPressureTop + avgPressureBottom) / 4);
             avgPressures.Add(averagePressure);
+            temps.Add(currentTemp);
         }
     }
 }

@@ -13,30 +13,11 @@ public partial class Particle : MonoBehaviour
         //if (doDebug) Debug.Log("1 interactionAcceleration:" + interactionAcceleration);
         if (myController.DoInteractions())
         {
-            bool logVelocities = false;
-            List<float> sqrvelocities = null;
-            if (myController.TLeftLogData() <= 0)
-            {
-                logVelocities = true;
-                sqrvelocities = new List<float>();
-                myController.squaredVelocities.Add(sqrvelocities);
-                //Log.AddLine("" + myController.currentTemp + ",...");
-                //Log.AddLine("" + myController.averagePressure + ",...");
-            }
-
             //calculate net forces from all other particles
             float nearbyDistSqr = 0;
             float numContributing = 0;
             foreach (Particle otherParticle in myController.particles)
             {
-                if(logVelocities)
-                {
-                    sqrvelocities.Add(otherParticle.velocity.sqrMagnitude);
-                }
-                if(myController.doAvgVelocityUpdate)
-                {
-                    myController.averageVelocitySqr += otherParticle.velocity.sqrMagnitude;
-                }
                 if (otherParticle == this)
                 {
                     //dont interact with yourself, you'll go blind
@@ -104,20 +85,6 @@ public partial class Particle : MonoBehaviour
 
             //if (doDebug) Debug.Log("2 interactionAcceleration:" + interactionAcceleration);
             //Debug.DrawLine(transform.position, transform.position + interactionAcceleration, Color.green, interactionAcceleration.magnitude);
-
-            //doing these here is a hack but it's an optimisation
-            //should only run once per update loop due to the boolean check doAvgVelocityUpdate
-            if (logVelocities)
-            {
-                float standardDeviation = 0;
-                foreach (Particle otherParticle in myController.particles)
-                {
-                    standardDeviation += Mathf.Pow(otherParticle.velocity.sqrMagnitude - myController.averageVelocitySqr, 2);
-                }
-                standardDeviation /= myController.particles.Count - 1;
-                standardDeviation = Mathf.Sqrt(standardDeviation);
-                myController.sqrVelocityError.Add(standardDeviation);
-            }
 
             //Debug.Log("3 interactionAcceleration:" + interactionAcceleration);
 

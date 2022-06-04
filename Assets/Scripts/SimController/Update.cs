@@ -15,9 +15,16 @@ public partial class SimController : MonoBehaviour
 
         if (simTime < timeMax || timeMax <= 0)
         {
+            if (numContributingSqrVelocity > 0)
+            {
+                currentAvgSqrVelocity = netSquaredVelocity / numContributingSqrVelocity;
+                netSquaredVelocity = 0;
+                numContributingSqrVelocity = 0;
+            }
             if(tLeftLogData <= 0)
             {
                 tLeftLogData = logDataInterval;
+                avgSqrVelocities.Add(currentAvgSqrVelocity);
             }
             tLeftLogData -= Time.deltaTime;
             simTime += SimDeltaTime();  //1/60 sec by default
@@ -31,7 +38,7 @@ public partial class SimController : MonoBehaviour
                 numRayCollissionsThisTick = 0;
 
                 RaysEmitted.Add(numRaysThisTick);
-                numRaysThisTick = 0;
+                //numRaysThisTick = 0;
             }
 
             timeText.text = "Trial time: " + simTime;

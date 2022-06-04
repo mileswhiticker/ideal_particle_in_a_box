@@ -14,6 +14,19 @@ public partial class SimController : MonoBehaviour
             logCreated = true;
 
             //log this trial
+            Log.AddLine("avg sqr velocities");
+            foreach (float curVal in avgSqrVelocities)
+            {
+                Log.AddLine("" + curVal + ",...");
+            }
+
+            /*Log.AddLine("temperature");
+            foreach (float curVal in temps)
+            {
+                Log.AddLine("" + curVal + ",...");
+            }*/
+
+            /*
             Log.AddLine("emits per tick");
             foreach (float curVal in RaysEmitted)
             {
@@ -24,7 +37,7 @@ public partial class SimController : MonoBehaviour
             {
                 Log.AddLine("" + curVal + ",...");
             }
-
+            */
 
             /*Log.AddLine("average distance");
             foreach(float curVal in avgParticleDistSqr)

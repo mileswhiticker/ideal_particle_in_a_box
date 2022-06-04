@@ -15,7 +15,7 @@ public partial class SimController : MonoBehaviour
         //float avoNumber = 6 * Mathf.Pow(10, 23);
         //float molarMass = volume / particles.Count;
         //float boltzmannConstant = 1.38f * Mathf.Pow(10, -23);
-        float modifiedBoltzmann = 1.38f*Mathf.Pow(10,4);
+        float modifiedBoltzmann = 1.38f*Mathf.Pow(10,0);
 
         //ideal gas
         //PV = nRT
@@ -30,13 +30,11 @@ public partial class SimController : MonoBehaviour
         //equipartition formula
         //U = (3/2)NkT
         //T = (2/3)U/Nk
-        float netKinetic = 0.5f * Particle.DefaultMass() * averageVelocitySqr;
+        float avgKinetic = 0.5f * Particle.DefaultMass() * currentAvgSqrVelocity;
         //Debug.Log(averageVelocitySqr);
-        currentTemp = (2 * netKinetic) / (3 * modifiedBoltzmann);
+        currentTemp = (2 * avgKinetic) / (3 * modifiedBoltzmann);
 
         temp.text = "Temperature: " + currentTemp;
-        particleVelocity.text = "Average squared velocity: " + averageVelocitySqr;
-        doAvgVelocityUpdate = true;
-        averageVelocitySqr = 0;
+        particleVelocity.text = "Average squared velocity: " + currentAvgSqrVelocity;
     }
 }

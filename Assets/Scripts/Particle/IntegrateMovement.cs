@@ -54,6 +54,9 @@ public partial class Particle : MonoBehaviour
 
         BoundaryIntersections();
 
+        myController.netSquaredVelocity += velocity.sqrMagnitude;
+        myController.numContributingSqrVelocity++;
+
         //a heat dissipation effect to gradually cool the simulation
         //doing x and z separately is crude but fast to calculate
         velocity *= 0.995f;

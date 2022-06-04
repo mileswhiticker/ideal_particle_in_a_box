@@ -5,15 +5,11 @@ using UnityEngine.UI;
 
 public partial class SimController : MonoBehaviour
 {
-    public bool doAvgVelocityUpdate = true;
-    public float averageVelocitySqr = 0;
-    public float averageVelocitySqrError = 0;
-
     public Material RedMaterial;
     public Material YellowMaterial;
     public Material GreenMaterial;
     private int startingParticles = 125;
-    private float timeMax = 60;
+    private float timeMax = 99999;
     private float startingTemp = 300f;  //kelvin
     public float currentTemp = 300;
     public Text particleVelocity;
@@ -39,8 +35,16 @@ public partial class SimController : MonoBehaviour
     public List<float> skyPressures = new List<float>();
     public List<float> groundPressures = new List<float>();
     public List<float> avgPressures = new List<float>();
-    public List<List<float>> squaredVelocities = new List<List<float>>();
-    public List<float> sqrVelocityError = new List<float>();
+
+    public float netSquaredVelocity = 0;
+    public float numContributingSqrVelocity = 0;
+    private bool doLogVelocities = false;
+    private float currentAvgSqrVelocity = 0;
+    public bool DoLogVelocities()
+    {
+        return doLogVelocities;
+    }
+    public List<float> avgSqrVelocities = new List<float>();
 
     private List<int> RayCollisions = new List<int>();
     private List<int> RaysEmitted = new List<int>();
@@ -48,6 +52,8 @@ public partial class SimController : MonoBehaviour
     private int numRaysThisTick = 0;
     private float tLeftLogDataRays = 4.9f;
     private float logDataIntervalRays = 5f;
+
+    public List<float> temps = new List<float>();
 
     public List<float> avgParticleDistSqr = new List<float>();
     public float currentParticleDistSqr = 0;
