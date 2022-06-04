@@ -15,7 +15,7 @@ public partial class SimController : MonoBehaviour
         //float avoNumber = 6 * Mathf.Pow(10, 23);
         //float molarMass = volume / particles.Count;
         //float boltzmannConstant = 1.38f * Mathf.Pow(10, -23);
-        float modifiedBoltzmann = 0.5f;
+        float modifiedBoltzmann = 1.38f*Mathf.Pow(10,4);
 
         //ideal gas
         //PV = nRT
